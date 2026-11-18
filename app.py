@@ -66,7 +66,7 @@ def logout():
 def generate():
     if "user" not in session: return jsonify({"err": "Unauthorized"}), 401
     days = int(request.json.get("days", 30))
-    expiry = (datetime.now() + timedelta(days=days)).strftime("%Y-%m-%d")
+    expiry = (datetime.now() + timedelta(seconds=60)).strftime("%Y-%m-%d")
     new_key = "SEIJI-" + secrets.token_hex(4).upper() + "-" + secrets.token_hex(4).upper()
     
     conn = sqlite3.connect(DB_FILE)
