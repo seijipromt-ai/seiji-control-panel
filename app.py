@@ -8,10 +8,9 @@ app = Flask(__name__)
 CORS(app)
 
 # ───────── ADMIN CONFIG ─────────
-ADMIN_PASSWORD = "SEIJI2009"
+ADMIN_PASSWORD = "ADMIN2009"
 
 # ───────── IN-MEMORY DATABASE ─────────
-# Format: "KEY-123": {"status": "active", "features": {...}}
 DB_USERS = {
     "SEIJI-TRIAL-123": {
         "status": "active",
