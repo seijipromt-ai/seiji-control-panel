@@ -3,232 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEIJI | Control Panel</title>
+    <title>SEIJI | Key Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; background-image: radial-gradient(circle at top right, #1e1b4b 0%, transparent 40%), radial-gradient(circle at bottom left, #0f172a 0%, transparent 40%); }
-        .glass-panel { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
-        .toggle-switch { appearance: none; width: 44px; height: 24px; background-color: #334155; border-radius: 24px; position: relative; cursor: pointer; outline: none; transition: all 0.3s; }
-        .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background-color: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .toggle-switch:checked { background-color: #f97316; box-shadow: 0 0 10px rgba(249, 115, 22, 0.5); }
-        .toggle-switch:checked::after { transform: translateX(20px); }
-        .glow-text { text-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; background-image: radial-gradient(circle at top right, #1e1b4b 0%, transparent 40%); }
+        .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .toggle { appearance: none; width: 48px; height: 26px; background-color: #ef4444; border-radius: 26px; position: relative; cursor: pointer; outline: none; transition: all 0.3s; }
+        .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background-color: white; border-radius: 50%; transition: transform 0.3s; }
+        .toggle:checked { background-color: #10b981; }
+        .toggle:checked::after { transform: translateX(22px); }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen flex items-center justify-center p-6 antialiased">
+<body class="text-slate-200 min-h-screen p-6 md:p-12">
     
-    <!-- USER PANEL -->
-    <div id="userPanel" class="glass-panel w-full max-w-lg rounded-3xl p-8 relative overflow-hidden transition-all duration-500">
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        
-        <div class="flex items-center gap-4 mb-8">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-orange-500/30">S</div>
+    <div class="max-w-5xl mx-auto glass rounded-3xl p-8 shadow-2xl">
+        <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-white glow-text tracking-tight">SEIJI CONTROL</h1>
-                <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">User Dashboard</p>
+                <h1 class="text-3xl font-bold text-white">Key Manager</h1>
+                <p class="text-sm text-slate-400 mt-1">Control script access via SQLite database</p>
             </div>
-        </div>
-        
-        <div class="mb-8">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">License Key</label>
-            <div class="relative">
-                <input type="text" id="keyInput" class="w-full bg-slate-900/50 border border-slate-700 text-orange-400 font-mono text-sm rounded-xl p-4 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder-slate-600" placeholder="Enter key...">
-                <button onclick="loadConfig()" class="absolute right-2 top-2 bottom-2 px-4 bg-slate-800 hover:bg-slate-700 text-sm font-medium rounded-lg border border-slate-600 transition-all">Sync</button>
-            </div>
+            <button onclick="generateKey()" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-orange-500/30">+ Generate Key</button>
         </div>
 
-        <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
-                <div class="flex flex-col"><span class="font-semibold text-white">Kill / Stats Hack</span></div>
-                <input type="checkbox" id="kill" class="toggle-switch" disabled>
-            </div>
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
-                <div class="flex flex-col"><span class="font-semibold text-white">Unlimited Gold</span></div>
-                <input type="checkbox" id="gold" class="toggle-switch" disabled>
-            </div>
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
-                <div class="flex flex-col"><span class="font-semibold text-white">Drone View</span></div>
-                <input type="checkbox" id="drone" class="toggle-switch" disabled>
-            </div>
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
-                <div class="flex flex-col"><span class="font-semibold text-white">ACE Bypass</span></div>
-                <input type="checkbox" id="bypass" class="toggle-switch" disabled>
-            </div>
+        <div id="loginSection">
+            <input type="password" id="adminPass" placeholder="Enter Admin Password" class="w-full md:w-1/2 bg-slate-900/50 border border-slate-700 text-white p-4 rounded-xl mb-4 focus:outline-none focus:border-orange-500">
+            <button onclick="login()" class="bg-slate-700 hover:bg-slate-600 px-8 py-4 rounded-xl font-bold">Login</button>
         </div>
-        
-        <div id="statusContainer" class="mt-6 text-center opacity-0 transition-opacity duration-300">
-            <span id="statusText" class="text-sm font-medium"></span>
-        </div>
-        
-        <!-- MAS KLARO NA ADMIN BUTTON -->
-        <button onclick="toggleAdminView()" class="mt-8 w-full text-sm text-orange-500 hover:text-orange-400 font-bold transition-colors flex items-center justify-center gap-2 border border-orange-500/30 rounded-xl py-3 bg-orange-500/10 hover:bg-orange-500/20">
-            🔒 Admin Access
-        </button>
-    </div>
 
-    <!-- ADMIN LOGIN -->
-    <div id="loginPanel" class="hidden glass-panel w-full max-w-sm rounded-3xl p-8 relative">
-        <h2 class="text-xl font-bold text-white mb-6">Admin Authentication</h2>
-        <input type="password" id="adminPass" class="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl p-4 mb-4 focus:outline-none focus:border-orange-500" placeholder="Enter admin password...">
-        <button onclick="adminLogin()" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl transition-all">Login</button>
-        <button onclick="toggleAdminView()" class="mt-4 w-full text-xs text-slate-500 hover:text-white transition-colors">Back to User</button>
-    </div>
-
-    <!-- ADMIN DASHBOARD -->
-    <div id="adminPanel" class="hidden w-full max-w-4xl relative">
-        <div class="glass-panel rounded-3xl p-8">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-white glow-text">Key Manager</h2>
-                    <p class="text-sm text-slate-400">Generate, edit, and revoke user keys</p>
-                </div>
-                <button onclick="generateKey()" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/30">Generate New Key</button>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
-                    <thead class="text-xs uppercase bg-slate-800/80 text-slate-400">
+        <div id="tableSection" class="hidden">
+            <div class="overflow-x-auto rounded-xl border border-slate-700/50">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-800 text-slate-300 uppercase text-xs">
                         <tr>
-                            <th class="px-4 py-3 rounded-tl-lg">Key</th>
-                            <th class="px-4 py-3 text-center">Kill</th>
-                            <th class="px-4 py-3 text-center">Gold</th>
-                            <th class="px-4 py-3 text-center">Drone</th>
-                            <th class="px-4 py-3 text-center">Bypass</th>
-                            <th class="px-4 py-3 text-right rounded-tr-lg">Action</th>
+                            <th class="px-6 py-4">License Key</th>
+                            <th class="px-6 py-4 text-center">Status</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="keyTable" class="divide-y divide-slate-700/50">
-                        <!-- Injected via JS -->
+                    <tbody id="keyTable" class="divide-y divide-slate-700/50 bg-slate-800/30">
+                        <!-- Keys injected here -->
                     </tbody>
                 </table>
             </div>
-            <button onclick="toggleAdminView()" class="mt-8 text-xs text-slate-500 hover:text-white transition-colors">Logout / User View</button>
         </div>
     </div>
 
     <script>
         const API_URL = window.location.origin + '/api';
-        let adminToken = "";
+        let token = "";
 
-        // --- USER LOGIC ---
-        async function loadConfig() {
-            const key = document.getElementById('keyInput').value;
-            try {
-                const res = await fetch(`${API_URL}/config?key=${key}`);
-                const data = await res.json();
-                
-                if (data.status) {
-                    document.getElementById('kill').checked = data.features.kill;
-                    document.getElementById('gold').checked = data.features.gold;
-                    document.getElementById('drone').checked = data.features.drone;
-                    document.getElementById('bypass').checked = data.features.bypass;
-                    showStatus("Configuration Synced", false);
-                } else {
-                    showStatus("Invalid or Revoked Key", true);
-                }
-            } catch (err) { showStatus("Connection failed", true); }
-        }
-
-        function showStatus(msg, isError) {
-            const container = document.getElementById('statusContainer');
-            const text = document.getElementById('statusText');
-            text.innerText = msg;
-            text.className = isError ? "text-sm font-medium text-red-400" : "text-sm font-medium text-emerald-400";
-            container.classList.remove('opacity-0');
-            setTimeout(() => container.classList.add('opacity-0'), 3000);
-        }
-
-        // --- VIEW TOGGLE ---
-        function toggleAdminView() {
-            const u = document.getElementById('userPanel');
-            const l = document.getElementById('loginPanel');
-            const a = document.getElementById('adminPanel');
-            
-            if (adminToken) {
-                // Logout
-                adminToken = "";
-                a.classList.add('hidden');
-                u.classList.remove('hidden');
-                l.classList.add('hidden');
-            } else {
-                // Show Login
-                u.classList.add('hidden');
-                l.classList.remove('hidden');
-            }
-        }
-
-        // --- ADMIN LOGIC ---
-        async function adminLogin() {
+        async function login() {
             const pass = document.getElementById('adminPass').value;
-            try {
-                const res = await fetch(`${API_URL}/admin/login`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({password: pass})
-                });
-                const data = await res.json();
-                if (data.status) {
-                    adminToken = data.token;
-                    document.getElementById('loginPanel').classList.add('hidden');
-                    document.getElementById('adminPanel').classList.remove('hidden');
-                    fetchKeys();
-                } else { alert("Wrong Password"); }
-            } catch (err) { alert("Error connecting to server"); }
+            const res = await fetch(`${API_URL}/admin/login`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({password: pass})
+            });
+            const data = await res.json();
+            if (data.status) {
+                token = data.token;
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('tableSection').classList.remove('hidden');
+                fetchKeys();
+            } else { alert("Wrong Password!"); }
         }
 
         async function fetchKeys() {
             const res = await fetch(`${API_URL}/admin/keys`, {
-                headers: {'Authorization': `Bearer ${adminToken}`}
+                headers: {'Authorization': `Bearer ${token}`}
             });
             const data = await res.json();
-            
             const tbody = document.getElementById('keyTable');
             tbody.innerHTML = "";
-            
-            if (data.status) {
-                for (const [key, info] of Object.entries(data.keys)) {
+
+            if (data.status && data.keys.length > 0) {
+                data.keys.forEach(k => {
+                    const isActive = k.status === 1;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="px-4 py-3 font-mono text-orange-400">${key}</td>
-                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.kill ? 'checked' : ''} onchange="editKey('${key}', 'kill', this.checked)"></td>
-                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.gold ? 'checked' : ''} onchange="editKey('${key}', 'gold', this.checked)"></td>
-                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.drone ? 'checked' : ''} onchange="editKey('${key}', 'drone', this.checked)"></td>
-                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.bypass ? 'checked' : ''} onchange="editKey('${key}', 'bypass', this.checked)"></td>
-                        <td class="px-4 py-3 text-right">
-                            <button onclick="revokeKey('${key}')" class="text-red-400 hover:text-red-300 font-medium text-xs bg-red-400/10 px-3 py-1 rounded border border-red-400/20">Revoke</button>
+                        <td class="px-6 py-4 font-mono text-orange-400 font-bold">${k.key}</td>
+                        <td class="px-6 py-4 text-center">
+                            <input type="checkbox" class="toggle" ${isActive ? 'checked' : ''} onchange="toggleKey('${k.key}')">
+                            <span class="ml-2 text-xs ${isActive ? 'text-emerald-400' : 'text-red-400'}">${isActive ? 'ACTIVE' : 'DISABLED'}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="deleteKey('${k.key}')" class="text-slate-400 hover:text-red-400 text-xs px-3 py-1 rounded border border-slate-600 hover:border-red-400 transition-all">Delete</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
-                }
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-slate-500">No keys generated yet.</td></tr>`;
             }
         }
 
         async function generateKey() {
-            const res = await fetch(`${API_URL}/admin/create`, {
-                method: 'POST',
-                headers: {'Authorization': `Bearer ${adminToken}`}
-            });
+            if (!token) return alert("Please login first.");
+            const res = await fetch(`${API_URL}/admin/create`, { method: 'POST', headers: {'Authorization': `Bearer ${token}`} });
             const data = await res.json();
             if (data.status) {
-                alert(`New Key Generated:\n${data.key}`);
+                alert(`✅ Key Generated:\n\n${data.key}`);
                 fetchKeys();
             }
         }
 
-        async function editKey(key, feature, state) {
-            await fetch(`${API_URL}/admin/edit`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
-                body: JSON.stringify({key: key, feature: feature, state: state})
+        async function toggleKey(key) {
+            await fetch(`${API_URL}/admin/toggle`, {
+                method: 'POST', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+                body: JSON.stringify({key: key})
             });
+            fetchKeys();
         }
 
-        async function revokeKey(key) {
-            if (!confirm(`Are you sure you want to REVOKE and DELETE key:\n${key}?`)) return;
-            await fetch(`${API_URL}/admin/revoke`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
+        async function deleteKey(key) {
+            if (!confirm(`Delete key ${key} permanently?`)) return;
+            await fetch(`${API_URL}/admin/delete`, {
+                method: 'POST', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
                 body: JSON.stringify({key: key})
             });
             fetchKeys();
