@@ -1,103 +1,111 @@
 import os
 import random
 import string
+import sqlite3
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-# ───────── ADMIN CONFIG ─────────
-ADMIN_PASSWORD = "ADMIN2009"
+ADMIN_PASSWORD = "BEGIE"
+DB_FILE = "licenses.db"
 
-# ───────── IN-MEMORY DATABASE ─────────
-DB_USERS = {
-    "SEIJI-TRIAL-123": {
-        "status": "active",
-        "features": {"kill": True, "gold": True, "drone": True, "bypass": False}
-    }
-}
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    # status: 1 = Active, 0 = Disabled
+    c.execute('''CREATE TABLE IF NOT EXISTS keys
+                 (key TEXT PRIMARY KEY, status INTEGER DEFAULT 1)''')
+    conn.commit()
+    conn.close()
+
+init_db()
+
+def db():
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # ───────── USER API ─────────
-@app.route('/api/config', methods=['GET'])
-def get_config():
-    key = request.args.get('key')
-    if not key or key not in DB_USERS:
-        return jsonify({"status": False, "message": "Invalid Key"}), 403
+@app.route('/api/auth', methods=['GET'])
+def auth():
+    key = request.args.get('key', '').strip()
+    if not key:
+        return jsonify({"status": False, "msg": "No key provided"}), 400
     
-    user_data = DB_USERS[key]
-    if user_data["status"] != "active":
-        return jsonify({"status": False, "message": "Key Revoked"}), 403
+    conn = db()
+    row = conn.execute("SELECT status FROM keys WHERE key=?", (key,)).fetchone()
+    conn.close()
 
-    return jsonify({"status": True, "features": user_data["features"]})
-
-@app.route('/api/update', methods=['POST'])
-def update_config():
-    data = request.json
-    key = data.get('key')
-    feature = data.get('feature')
-    state = data.get('state')
-    
-    if key in DB_USERS:
-        DB_USERS[key]["features"][feature] = state
-        return jsonify({"status": True, "message": "Updated"})
-    return jsonify({"status": False, "message": "User not found"}), 404
+    if row and row['status'] == 1:
+        return jsonify({"status": True})
+    return jsonify({"status": False, "msg": "Invalid or Disabled"}), 403
 
 # ───────── ADMIN API ─────────
 @app.route('/api/admin/login', methods=['POST'])
 def admin_login():
-    data = request.json
-    if data.get('password') == ADMIN_PASSWORD:
-        return jsonify({"status": True, "token": "admin-session-ok"})
-    return jsonify({"status": False, "message": "Wrong Password"}), 401
+    if request.json.get('password') == ADMIN_PASSWORD:
+        return jsonify({"status": True, "token": "admin-ok"})
+    return jsonify({"status": False}), 401
 
 @app.route('/api/admin/keys', methods=['GET'])
-def get_all_keys():
-    if request.headers.get('Authorization') != "Bearer admin-session-ok":
+def get_keys():
+    if request.headers.get('Authorization') != "Bearer admin-ok":
         return jsonify({"status": False}), 401
-    return jsonify({"status": True, "keys": DB_USERS})
+    conn = db()
+    rows = conn.execute("SELECT * FROM keys").fetchall()
+    conn.close()
+    return jsonify({"status": True, "keys": [dict(r) for r in rows]})
 
 @app.route('/api/admin/create', methods=['POST'])
 def create_key():
-    if request.headers.get('Authorization') != "Bearer admin-session-ok":
+    if request.headers.get('Authorization') != "Bearer admin-ok":
         return jsonify({"status": False}), 401
     
     raw = "".join(random.choices(string.ascii_uppercase + string.digits, k=12))
     new_key = f"SEIJI-{raw[:4]}-{raw[4:8]}-{raw[8:12]}"
     
-    DB_USERS[new_key] = {
-        "status": "active",
-        "features": {"kill": False, "gold": False, "drone": False, "bypass": False}
-    }
-    return jsonify({"status": True, "key": new_key})
+    conn = db()
+    try:
+        conn.execute("INSERT INTO keys (key, status) VALUES (?, 1)", (new_key,))
+        conn.commit()
+        return jsonify({"status": True, "key": new_key})
+    except sqlite3.IntegrityError:
+        return jsonify({"status": False, "msg": "Key collision"}), 500
+    finally:
+        conn.close()
 
-@app.route('/api/admin/edit', methods=['POST'])
-def edit_key():
-    if request.headers.get('Authorization') != "Bearer admin-session-ok":
-        return jsonify({"status": False}), 401
-    
-    data = request.json
-    key = data.get('key')
-    feature = data.get('feature')
-    state = data.get('state')
-    
-    if key in DB_USERS:
-        DB_USERS[key]["features"][feature] = state
-        return jsonify({"status": True})
-    return jsonify({"status": False}), 404
-
-@app.route('/api/admin/revoke', methods=['POST'])
-def revoke_key():
-    if request.headers.get('Authorization') != "Bearer admin-session-ok":
+@app.route('/api/admin/toggle', methods=['POST'])
+def toggle_key():
+    if request.headers.get('Authorization') != "Bearer admin-ok":
         return jsonify({"status": False}), 401
     
     data = request.json
     key = data.get('key')
     
-    if key in DB_USERS:
-        del DB_USERS[key]
-        return jsonify({"status": True})
+    conn = db()
+    row = conn.execute("SELECT status FROM keys WHERE key=?", (key,)).fetchone()
+    if row:
+        new_status = 0 if row['status'] == 1 else 1
+        conn.execute("UPDATE keys SET status=? WHERE key=?", (new_status, key))
+        conn.commit()
+        conn.close()
+        return jsonify({"status": True, "new_status": new_status})
+    conn.close()
     return jsonify({"status": False}), 404
+
+@app.route('/api/admin/delete', methods=['POST'])
+def delete_key():
+    if request.headers.get('Authorization') != "Bearer admin-ok":
+        return jsonify({"status": False}), 401
+    
+    key = request.json.get('key')
+    conn = db()
+    conn.execute("DELETE FROM keys WHERE key=?", (key,))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": True})
 
 @app.route('/')
 def index():
