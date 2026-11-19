@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,78 +18,97 @@
 </head>
 <body class="text-slate-200 min-h-screen flex items-center justify-center p-6 antialiased">
     
-    <div class="glass-panel w-full max-w-lg rounded-3xl p-8 relative overflow-hidden">
-        <!-- Decorative gradients -->
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+    <!-- USER PANEL -->
+    <div id="userPanel" class="glass-panel w-full max-w-lg rounded-3xl p-8 relative overflow-hidden transition-all duration-500">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
         
-        <!-- Header -->
         <div class="flex items-center gap-4 mb-8">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-orange-500/30">
-                S
-            </div>
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-orange-500/30">S</div>
             <div>
                 <h1 class="text-2xl font-bold text-white glow-text tracking-tight">SEIJI CONTROL</h1>
-                <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">Dashboard v2.0</p>
+                <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">User Dashboard</p>
             </div>
         </div>
         
-        <!-- License Input -->
         <div class="mb-8">
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">License Key</label>
             <div class="relative">
-                <input type="text" id="keyInput" value="SEIJI-VIP-999" class="w-full bg-slate-900/50 border border-slate-700 text-orange-400 font-mono text-sm rounded-xl p-4 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder-slate-600" placeholder="Enter key...">
-                <button onclick="loadConfig()" class="absolute right-2 top-2 bottom-2 px-4 bg-slate-800 hover:bg-slate-700 text-sm font-medium rounded-lg border border-slate-600 transition-all">
-                    Sync
-                </button>
+                <input type="text" id="keyInput" class="w-full bg-slate-900/50 border border-slate-700 text-orange-400 font-mono text-sm rounded-xl p-4 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder-slate-600" placeholder="Enter key...">
+                <button onclick="loadConfig()" class="absolute right-2 top-2 bottom-2 px-4 bg-slate-800 hover:bg-slate-700 text-sm font-medium rounded-lg border border-slate-600 transition-all">Sync</button>
             </div>
         </div>
 
-        <!-- Features Grid -->
         <div class="space-y-4">
-            
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-800/60 transition-all">
-                <div class="flex flex-col">
-                    <span class="font-semibold text-white">Kill / Stats Hack</span>
-                    <span class="text-xs text-slate-400 mt-1">Modifies in-game stat pointers</span>
-                </div>
-                <input type="checkbox" id="kill" class="toggle-switch" onchange="updateFeature('kill', this.checked)">
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <div class="flex flex-col"><span class="font-semibold text-white">Kill / Stats Hack</span></div>
+                <input type="checkbox" id="kill" class="toggle-switch" disabled>
             </div>
-            
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-800/60 transition-all">
-                <div class="flex flex-col">
-                    <span class="font-semibold text-white">Unlimited Gold</span>
-                    <span class="text-xs text-slate-400 mt-1">Patches gold generation</span>
-                </div>
-                <input type="checkbox" id="gold" class="toggle-switch" onchange="updateFeature('gold', this.checked)">
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <div class="flex flex-col"><span class="font-semibold text-white">Unlimited Gold</span></div>
+                <input type="checkbox" id="gold" class="toggle-switch" disabled>
             </div>
-            
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-800/60 transition-all">
-                <div class="flex flex-col">
-                    <span class="font-semibold text-white">Drone View</span>
-                    <span class="text-xs text-slate-400 mt-1">Extends camera field of view</span>
-                </div>
-                <input type="checkbox" id="drone" class="toggle-switch" onchange="updateFeature('drone', this.checked)">
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <div class="flex flex-col"><span class="font-semibold text-white">Drone View</span></div>
+                <input type="checkbox" id="drone" class="toggle-switch" disabled>
             </div>
-            
-            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-800/60 transition-all">
-                <div class="flex flex-col">
-                    <span class="font-semibold text-white">ACE Bypass</span>
-                    <span class="text-xs text-slate-400 mt-1">Memory obfuscation protocols</span>
-                </div>
-                <input type="checkbox" id="bypass" class="toggle-switch" onchange="updateFeature('bypass', this.checked)">
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <div class="flex flex-col"><span class="font-semibold text-white">ACE Bypass</span></div>
+                <input type="checkbox" id="bypass" class="toggle-switch" disabled>
             </div>
-
         </div>
         
-        <!-- Status -->
         <div id="statusContainer" class="mt-6 text-center opacity-0 transition-opacity duration-300">
             <span id="statusText" class="text-sm font-medium"></span>
+        </div>
+        
+        <button onclick="toggleAdminView()" class="mt-6 w-full text-xs text-slate-500 hover:text-orange-500 transition-colors">Admin Access</button>
+    </div>
+
+    <!-- ADMIN LOGIN -->
+    <div id="loginPanel" class="hidden glass-panel w-full max-w-sm rounded-3xl p-8 relative">
+        <h2 class="text-xl font-bold text-white mb-6">Admin Authentication</h2>
+        <input type="password" id="adminPass" class="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-xl p-4 mb-4 focus:outline-none focus:border-orange-500" placeholder="Enter admin password...">
+        <button onclick="adminLogin()" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl transition-all">Login</button>
+        <button onclick="toggleAdminView()" class="mt-4 w-full text-xs text-slate-500 hover:text-white transition-colors">Back to User</button>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminPanel" class="hidden w-full max-w-4xl relative">
+        <div class="glass-panel rounded-3xl p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-white glow-text">Key Manager</h2>
+                    <p class="text-sm text-slate-400">Generate, edit, and revoke user keys</p>
+                </div>
+                <button onclick="generateKey()" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-6 rounded-lg transition-all shadow-lg shadow-orange-500/30">Generate New Key</button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="text-xs uppercase bg-slate-800/80 text-slate-400">
+                        <tr>
+                            <th class="px-4 py-3 rounded-tl-lg">Key</th>
+                            <th class="px-4 py-3 text-center">Kill</th>
+                            <th class="px-4 py-3 text-center">Gold</th>
+                            <th class="px-4 py-3 text-center">Drone</th>
+                            <th class="px-4 py-3 text-center">Bypass</th>
+                            <th class="px-4 py-3 text-right rounded-tr-lg">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keyTable" class="divide-y divide-slate-700/50">
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="toggleAdminView()" class="mt-8 text-xs text-slate-500 hover:text-white transition-colors">Logout / User View</button>
         </div>
     </div>
 
     <script>
         const API_URL = window.location.origin + '/api';
+        let adminToken = "";
 
+        // --- USER LOGIC ---
         async function loadConfig() {
             const key = document.getElementById('keyInput').value;
             try {
@@ -103,40 +122,114 @@
                     document.getElementById('bypass').checked = data.features.bypass;
                     showStatus("Configuration Synced", false);
                 } else {
-                    showStatus("Invalid or Expired Key", true);
+                    showStatus("Invalid or Revoked Key", true);
                 }
-            } catch (err) {
-                showStatus("Connection failed", true);
-            }
-        }
-
-        async function updateFeature(feature, state) {
-            const key = document.getElementById('keyInput').value;
-            try {
-                const res = await fetch(`${API_URL}/update`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({key: key, feature: feature, state: state})
-                });
-                const data = await res.json();
-                if(data.status) showStatus(`${feature.toUpperCase()} is now ${state ? 'ENABLED' : 'DISABLED'}`, false);
-            } catch (err) {
-                showStatus("Failed to update", true);
-            }
+            } catch (err) { showStatus("Connection failed", true); }
         }
 
         function showStatus(msg, isError) {
             const container = document.getElementById('statusContainer');
             const text = document.getElementById('statusText');
-            
             text.innerText = msg;
             text.className = isError ? "text-sm font-medium text-red-400" : "text-sm font-medium text-emerald-400";
-            
             container.classList.remove('opacity-0');
             setTimeout(() => container.classList.add('opacity-0'), 3000);
         }
 
-        window.onload = loadConfig;
+        // --- VIEW TOGGLE ---
+        function toggleAdminView() {
+            const u = document.getElementById('userPanel');
+            const l = document.getElementById('loginPanel');
+            const a = document.getElementById('adminPanel');
+            
+            if (adminToken) {
+                // Logout
+                adminToken = "";
+                a.classList.add('hidden');
+                u.classList.remove('hidden');
+                l.classList.add('hidden');
+            } else {
+                // Show Login
+                u.classList.add('hidden');
+                l.classList.remove('hidden');
+            }
+        }
+
+        // --- ADMIN LOGIC ---
+        async function adminLogin() {
+            const pass = document.getElementById('adminPass').value;
+            try {
+                const res = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({password: pass})
+                });
+                const data = await res.json();
+                if (data.status) {
+                    adminToken = data.token;
+                    document.getElementById('loginPanel').classList.add('hidden');
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    fetchKeys();
+                } else { alert("Wrong Password"); }
+            } catch (err) { alert("Error connecting to server"); }
+        }
+
+        async function fetchKeys() {
+            const res = await fetch(`${API_URL}/admin/keys`, {
+                headers: {'Authorization': `Bearer ${adminToken}`}
+            });
+            const data = await res.json();
+            
+            const tbody = document.getElementById('keyTable');
+            tbody.innerHTML = "";
+            
+            if (data.status) {
+                for (const [key, info] of Object.entries(data.keys)) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 font-mono text-orange-400">${key}</td>
+                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.kill ? 'checked' : ''} onchange="editKey('${key}', 'kill', this.checked)"></td>
+                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.gold ? 'checked' : ''} onchange="editKey('${key}', 'gold', this.checked)"></td>
+                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.drone ? 'checked' : ''} onchange="editKey('${key}', 'drone', this.checked)"></td>
+                        <td class="px-4 py-3 text-center"><input type="checkbox" class="toggle-switch" ${info.features.bypass ? 'checked' : ''} onchange="editKey('${key}', 'bypass', this.checked)"></td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="revokeKey('${key}')" class="text-red-400 hover:text-red-300 font-medium text-xs bg-red-400/10 px-3 py-1 rounded border border-red-400/20">Revoke</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            }
+        }
+
+        async function generateKey() {
+            const res = await fetch(`${API_URL}/admin/create`, {
+                method: 'POST',
+                headers: {'Authorization': `Bearer ${adminToken}`}
+            });
+            const data = await res.json();
+            if (data.status) {
+                alert(`New Key Generated:\n${data.key}`);
+                fetchKeys();
+            }
+        }
+
+        async function editKey(key, feature, state) {
+            await fetch(`${API_URL}/admin/edit`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
+                body: JSON.stringify({key: key, feature: feature, state: state})
+            });
+        }
+
+        async function revokeKey(key) {
+            if (!confirm(`Are you sure you want to REVOKE and DELETE key:\n${key}?`)) return;
+            await fetch(`${API_URL}/admin/revoke`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}`},
+                body: JSON.stringify({key: key})
+            });
+            fetchKeys();
+        }
     </script>
 </body>
 </html>
